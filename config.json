@@ -1,0 +1,5 @@
+{"zip_database_path":"./zip_code_database.csv",
+"city_states":["Seattle, WA"],
+"zip_codes":["77002"],
+"lat_tuner":"1.5",
+"lon_tuner":"1.5"}
