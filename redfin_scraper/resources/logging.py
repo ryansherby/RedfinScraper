@@ -28,7 +28,7 @@ def timing_log(func):
         tic=time.perf_counter()
         obj=func(*args,**kwargs)
         toc=time.perf_counter()
-        logging.info(f"Function {func.__name__} took {toc-tic} second.")
+        logging.info(f"Function {func.__name__} took {toc-tic} seconds.")
         return obj
     return wrapper
 
