@@ -2,6 +2,7 @@ import re
 import json
 import datetime as dt
 import time
+import itertools
 
 import requests
 from bs4 import BeautifulSoup
@@ -9,6 +10,7 @@ import numpy as np
 import pandas as pd
 import pyparsing as pp
 import concurrent.futures
+import multiprocessing
 
 import redfin_scraper.config as rsc
 
@@ -86,8 +88,13 @@ class RedfinScraper:
     def scrape(self,city_states:list[str]=rsrj.get_config_value('city_states'),
                zip_codes:list[str]=rsrj.get_config_value('zip_codes'),
                lat_tuner:float=rsrj.get_config_value('lat_tuner'),
-               lon_tuner:float=rsrj.get_config_value('lon_tuner')):
-
+               lon_tuner:float=rsrj.get_config_value('lon_tuner'),
+               multiprocess=rsrj.get_config_value('multiprocess')):
+        
+        if multiprocess==None:
+            multiprocess=False
+        else:
+            multiprocess=True
 
         if lat_tuner==None:
             lat_tuner=rsc.DEFAULT_TUNER_VARIABLE
@@ -124,6 +131,25 @@ class RedfinScraper:
         zip_list=list(set(zip_list)) #Eliminate duplicates
 
 
+        if multiprocess:
+            df_list=self._multiprocess_core(self._core,zip_list)
+        else:
+            df_list=self._core
+
+        concat_df=pd.concat(df_list,axis=0)
+        concat_df=concat_df.apply(lambda row:pd.to_numeric(row,errors='ignore'))
+        concat_df.reset_index(inplace=True)
+
+        self.df=concat_df
+
+        self._data_id_ticker+=1
+        self.data_id=f"D{self._data_id_ticker:03d}"
+        self.data[self.data_id]=self.df
+
+        return self.df
+
+
+    def _core(self,zip_list):
         page_urls=self._generate_urls(zip_codes=zip_list)
 
         soups=self._threaded_request(self._get_soup,urls=page_urls)
@@ -134,18 +160,38 @@ class RedfinScraper:
 
         api_responses=self._threaded_request(self._get_API_response,urls=api_urls)
 
-        self.df=self._set_dataframe(api_responses)
+        df_list=self._set_dataframe(api_responses)
 
-        self._data_id_ticker+=1
-        self.data_id=f"D{self._data_id_ticker:03d}"
-        self.data[self.data_id]=self.df
-
-        return self.df
+        return df_list
 
 
 
+    def _multiprocess_core(self,func,zip_list):
+        
+        main_df_list=[]
+
+        zip_list_div=list(self._split(zip_list,multiprocessing.cpu_count()))
+        # Separate zip_list into cpu_count equal pieces
+
+        with concurrent.futures.ProcessPoolExecutor() as exe:
+            future_to_df={exe.submit(func,zip_sub_list):zip_sub_list for zip_sub_list in zip_list_div}
+            for future in concurrent.futures.as_completed(future_to_df):
+                zip_sub_list = future_to_df[future]
+                try:
+                    main_df_list.append(future.result())
+                except:
+                    pass
+        
+        main_df_list=(list(itertools.chain.from_iterable(main_df_list)))
+        # Merge list of lists to single list
+
+        return main_df_list
 
 
+
+    def _split(self,a, n):
+        k, m = divmod(len(a), n)
+        return (a[i*k+min(i, m):(i+1)*k+min(i+1, m)] for i in range(n))
 
 
 
@@ -360,11 +406,7 @@ class RedfinScraper:
             df=pd.DataFrame(data=response[1:],columns=response[0])
             df_list.append(df)
 
-        concat_df=pd.concat(df_list,axis=0)
-        concat_df=concat_df.apply(lambda row:pd.to_numeric(row,errors='ignore'))
-        concat_df.reset_index(inplace=True)
-
-        return concat_df
+        return df_list
 
 
 
