@@ -9,7 +9,7 @@ scraper.setup('./zip_code_database.csv')
 scraper=RedfinScraper()
 scraper.setup() # From Config
 
-scraper=RedfinScraper()
+scraper=RedfinScraper(multiprocessing=True)
 scraper.setup(None)
 
 scraper.setup() # Test for no re-download
@@ -28,3 +28,5 @@ for i in range(1,7):
         scraper.get_data(id=f"D00{i}")
     except:
         print("Failed")
+
+

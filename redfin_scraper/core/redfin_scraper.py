@@ -3,14 +3,14 @@ import json
 import datetime as dt
 import time
 import itertools
+import multiprocessing
+import concurrent.futures
 
 import requests
 from bs4 import BeautifulSoup
 import numpy as np
 import pandas as pd
 import pyparsing as pp
-import concurrent.futures
-import multiprocessing
 
 import redfin_scraper.config as rsc
 
@@ -22,12 +22,18 @@ import redfin_scraper.resources.json_tools as rsrj
 class RedfinScraper:
 
     @rsrl.reset_log
-    def __init__(self):
+    def __init__(self,multiprocessing=rsrj.get_config_value('multiprocessing')):
 
         self.data={}
         self._data_id_ticker=0
-        self.df=None
+        self.df=pd.DataFrame()
         self.zip_database=pd.DataFrame()
+
+        if multiprocessing=='True' or multiprocessing=='true' or multiprocessing == True:
+            self._mp=True
+        else:
+            self._mp=False
+
 
 
 
@@ -49,7 +55,12 @@ class RedfinScraper:
                 zip_codes_req=requests.get(rsc.ZIP_DATASET_URL.format(csv_link_target),headers=user_agent)
                 zip_codes_text=zip_codes_req.text
 
-                zip_list=self._parse_csv(zip_codes_text)
+                listed_zip_codes_text=zip_codes_text.splitlines()
+
+                if self._mp:
+                    zip_list=self._multiprocess_func(self._parse_listed_csv,listed_zip_codes_text)
+                else:
+                    zip_list=self._parse_listed_csv(listed_zip_codes_text)
 
                 temp_zip_database=pd.DataFrame(data=zip_list[1:],columns=zip_list[0])
                 temp_zip_database_dtype=temp_zip_database.apply(lambda row:pd.to_numeric(row,errors='ignore'))
@@ -88,13 +99,8 @@ class RedfinScraper:
     def scrape(self,city_states:list[str]=rsrj.get_config_value('city_states'),
                zip_codes:list[str]=rsrj.get_config_value('zip_codes'),
                lat_tuner:float=rsrj.get_config_value('lat_tuner'),
-               lon_tuner:float=rsrj.get_config_value('lon_tuner'),
-               multiprocess=rsrj.get_config_value('multiprocess')):
-        
-        if multiprocess==None:
-            multiprocess=False
-        else:
-            multiprocess=True
+               lon_tuner:float=rsrj.get_config_value('lon_tuner')):
+    
 
         if lat_tuner==None:
             lat_tuner=rsc.DEFAULT_TUNER_VARIABLE
@@ -130,9 +136,8 @@ class RedfinScraper:
 
         zip_list=list(set(zip_list)) #Eliminate duplicates
 
-
-        if multiprocess:
-            df_list=self._multiprocess_core(self._core,zip_list)
+        if self._mp:
+            df_list=self._multiprocess_func(self._core,zip_list)
         else:
             df_list=self._core
 
@@ -166,26 +171,26 @@ class RedfinScraper:
 
 
 
-    def _multiprocess_core(self,func,zip_list):
+    def _multiprocess_func(self,func,list_obj):
         
-        main_df_list=[]
+        main_list=[]
 
-        zip_list_div=list(self._split(zip_list,multiprocessing.cpu_count()))
-        # Separate zip_list into cpu_count equal pieces
+        list_of_lists=list(self._split(list_obj,multiprocessing.cpu_count()))
+        # Separate list into cpu_count equal pieces
 
         with concurrent.futures.ProcessPoolExecutor() as exe:
-            future_to_df={exe.submit(func,zip_sub_list):zip_sub_list for zip_sub_list in zip_list_div}
-            for future in concurrent.futures.as_completed(future_to_df):
-                zip_sub_list = future_to_df[future]
+            futures={exe.submit(func,sub_list):sub_list for sub_list in list_of_lists}
+            for future in concurrent.futures.as_completed(futures):
+                sub_list = futures[future]
                 try:
-                    main_df_list.append(future.result())
+                    main_list.append(future.result())
                 except:
                     pass
         
-        main_df_list=(list(itertools.chain.from_iterable(main_df_list)))
+        main_list=(list(itertools.chain.from_iterable(main_list)))
         # Merge list of lists to single list
 
-        return main_df_list
+        return main_list
 
 
 
@@ -212,13 +217,10 @@ class RedfinScraper:
 
 
 
-    def _parse_csv(self,csv_file:str) -> list[list]:
-            
+    def _parse_listed_csv(self,listed_csv:list[str]) -> list[list]:
         csv_contents_list=[]
-
-        split_csv_file=csv_file.splitlines()
-
-        for li in split_csv_file:
+        
+        for li in listed_csv:
             csv_contents_list.append(pp.common.comma_separated_list.parseString(li).asList())
 
         return csv_contents_list
