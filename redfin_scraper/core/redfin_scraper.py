@@ -22,7 +22,7 @@ import redfin_scraper.resources.json_tools as rsrj
 class RedfinScraper:
 
     @rsrl.reset_log
-    def __init__(self,multiprocessing=rsrj.get_config_value('multiprocessing')):
+    def __init__(self,multiprocessing:bool=rsrj.get_config_value('multiprocessing')):
 
         self.data={}
         self._data_id_ticker=0
@@ -40,7 +40,7 @@ class RedfinScraper:
 
 
     @rsrl.timing_log
-    def setup(self,zip_database_path=rsrj.get_config_value('zip_database_path')):
+    def setup(self,zip_database_path:str=rsrj.get_config_value('zip_database_path')):
 
         if self.zip_database.empty:
             if zip_database_path==None:
