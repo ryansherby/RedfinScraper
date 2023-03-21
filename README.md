@@ -5,7 +5,7 @@ A Python library used to scrape data from Redfin.com using the unofficial String
 
 Please note that certain cities/zip codes may not be available pursuant to the bylaws of the MLS for that jurisdiction.
 
-This library is **powerful** and if not used properly, can result in:
+This library is **powerful**, and if not used properly, can result in:
 * Consumption of all available CPU resources for an extended period of time
 * Discipinary action from Redfin against your IP address
 
