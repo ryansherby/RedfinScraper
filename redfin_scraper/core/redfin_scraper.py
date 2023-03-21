@@ -165,9 +165,9 @@ class RedfinScraper:
     def _core(self,zip_list):
         page_urls=self._generate_urls(zip_codes=zip_list)
 
-        soups=self._threaded_request(self._get_soup,urls=page_urls)
+        url_soups=self._threaded_request(self._get_soup,urls=page_urls)
 
-        api_links=self._get_API_links(soups)
+        api_links=self._get_API_links(url_soups)
 
         api_urls=self._generate_urls(api_links=api_links)
 
@@ -354,14 +354,14 @@ class RedfinScraper:
 
 
 
-    def _get_API_links(self,soups:list[BeautifulSoup]):
+    def _get_API_links(self,url_soups:list[tuple[str,BeautifulSoup]]):
         api_links=[]
-        for soup in soups:
+        for url,soup in url_soups:
             try:
                 target=soup.find(rsc.REDFIN_API_CLASS_DEF[0],rsc.REDFIN_API_CLASS_DEF[1])[rsc.REDFIN_API_CLASS_ID]
                 api_links.append(target)
             except:
-                pass
+                self._check_no_API_link(url)
         return api_links
 
 
@@ -380,7 +380,7 @@ class RedfinScraper:
 
         soup=BeautifulSoup(req_text,'html.parser')
 
-        return soup
+        return (url,soup)
 
 
 
@@ -389,6 +389,11 @@ class RedfinScraper:
     @rsrl.log_404
     def _check_404(self,req:requests.Response,url):
         return req.status_code%400 in (1,2,3,4)
+    
+
+    @rsrl.log_no_API_link
+    def _check_no_API_link(self,url):
+        return True
 
 
 
