@@ -29,7 +29,7 @@ class RedfinScraper:
         self.df=pd.DataFrame()
         self.zip_database=pd.DataFrame()
 
-        self.mp=False
+        self._mp=False
 
 
 
@@ -147,7 +147,7 @@ class RedfinScraper:
         if self._mp:
             df_list=self._multiprocess_func(self._core,zip_list)
         else:
-            df_list=self._core
+            df_list=self._core(zip_list)
 
         concat_df=pd.concat(df_list,axis=0)
         concat_df=concat_df.apply(lambda row:pd.to_numeric(row,errors='ignore'))
@@ -401,7 +401,9 @@ class RedfinScraper:
 
         req_text=req.text
 
-        parsed_response=self._parse_csv(req_text)
+        listed_req_text=req_text.splitlines()
+
+        parsed_response=self._parse_listed_csv(listed_req_text)
 
         return parsed_response
     
