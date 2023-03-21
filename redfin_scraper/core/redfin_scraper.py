@@ -22,18 +22,14 @@ import redfin_scraper.resources.json_tools as rsrj
 class RedfinScraper:
 
     @rsrl.reset_log
-    def __init__(self,multiprocessing:bool=rsrj.get_config_value('multiprocessing')):
+    def __init__(self):
 
         self.data={}
         self._data_id_ticker=0
         self.df=pd.DataFrame()
         self.zip_database=pd.DataFrame()
 
-        if multiprocessing=='True' or multiprocessing=='true' or multiprocessing == True:
-            self._mp=True
-        else:
-            self._mp=False
-
+        self.mp=False
 
 
 
@@ -41,7 +37,7 @@ class RedfinScraper:
 
 
     @rsrl.timing_log
-    def setup(self,zip_database_path:str=rsrj.get_config_value('zip_database_path')):
+    def setup(self,zip_database_path:str=rsrj.get_config_value('zip_database_path'),multiprocessing:bool=rsrj.get_config_value('multiprocessing')):
 
         if self.zip_database.empty:
             if zip_database_path==None:
@@ -77,6 +73,13 @@ class RedfinScraper:
                     self.zip_database=pd.read_csv(filepath_or_buffer=zip_database_path)
                 except:
                     raise Exception("Could not locate zip_database.csv")
+
+
+
+        if multiprocessing=='True' or multiprocessing=='true' or multiprocessing == True:
+            self._mp=True       
+        
+
 
 
 
