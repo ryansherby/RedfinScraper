@@ -11,7 +11,6 @@ from bs4 import BeautifulSoup
 import numpy as np
 import pandas as pd
 import pyparsing as pp
-from selenium import webdriver
 
 import redfin_scraper.config as rsc
 
