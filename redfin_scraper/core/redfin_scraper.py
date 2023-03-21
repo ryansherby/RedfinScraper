@@ -40,21 +40,25 @@ class RedfinScraper:
 
 
 
+
     @rsrl.timing_log
     def setup(self,zip_database_path:str=rsrj.get_config_value('zip_database_path')):
 
         if self.zip_database.empty:
             if zip_database_path==None:
-                user_agent=self._randomized_UA()
 
-                page_req=requests.get(rsc.ZIP_DATASET_URL.format(rsc.CONST_ZD_URL_EXTENSION),headers=user_agent)
-                page_text=page_req.text
+                raise DeprecationWarning("Value for zip_database_path is required")
 
-                page_soup=BeautifulSoup(page_text,'html.parser')
-                csv_link_target=page_soup.find_all('a',{'class':'btn btn-primary'})[2]['href']
+                """
+                req=requests.get(rsc.ZIP_DATASET_URL.format(rsc.CONST_ZD_URL_EXTENSION),headers=self._randomized_UA)
 
-                zip_codes_req=requests.get(rsc.ZIP_DATASET_URL.format(csv_link_target),headers=user_agent)
-                zip_codes_text=zip_codes_req.text
+                source=req.text
+
+                soup=BeautifulSoup(source,'html.parser')
+            
+                csv_link_target=soup.find_all('a',{'class':'btn btn-primary'})[2]['href']
+
+                zip_codes_text=requests.get(csv_link_target,headers=self._randomized_UA)
 
                 listed_zip_codes_text=zip_codes_text.splitlines()
 
@@ -67,6 +71,7 @@ class RedfinScraper:
                 temp_zip_database_dtype=temp_zip_database.apply(lambda row:pd.to_numeric(row,errors='ignore'))
 
                 self.zip_database=temp_zip_database_dtype
+                """
 
             else:
                 try:
