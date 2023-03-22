@@ -1,7 +1,7 @@
 ﻿# Redfin Scraper
 
 ## Description
-A Python library used to scrape data from Redfin.com using the unofficial Stringray API.
+A scalable Python library that leverages the unofficial Stringray API to quickly scrape real estate data hosted by Redfin.
 
 ## One-Time Setup
 ### Zip Code Database
