@@ -7,7 +7,7 @@ Please note that certain cities/zip codes may not be available pursuant to the b
 
 This library is **powerful**, and if not used properly, can result in:
 * Consumption of all available CPU resources for an extended period of time
-* Discipinary action from Redfin against your IP address
+* Disciplinary action from Redfin against your IP address
 
 ## Installation
 `pip install redfin-scraper`
