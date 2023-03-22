@@ -1,16 +1,13 @@
 from redfin_scraper import RedfinScraper
 
 scraper=RedfinScraper()
-scraper.setup('JUNK')
+scraper.setup('JUNK') # FAILS
 
 scraper=RedfinScraper()
-scraper.setup('./zip_code_database.csv')
+scraper.setup('./zip_code_database.csv',multiprocessing=True)
 
 scraper=RedfinScraper()
 scraper.setup() # From Config
-
-scraper=RedfinScraper(multiprocessing=True)
-scraper.setup(None)
 
 scraper.setup() # Test for no re-download
 
