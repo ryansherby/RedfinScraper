@@ -1,0 +1,33 @@
+# pyproject.toml
+
+[build-system]
+requires      = ["setuptools>=61.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "redfin-scraper"
+version = "0.1.0"
+description = "A Python library used to scrape data from Redfin.com using the unofficial Stringray API."
+readme = "README.md"
+authors = [{ name = "Ryan Sherby", email = "ryan.m.sherby@gmail.com" }]
+license = { file = "LICENSE.txt" }
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+]
+keywords = ["scraper", "scraping", "Redfin", "real estate", "data", "housing", "houses"]
+dependencies = [
+    "pandas",
+    "numpy",
+    "bs4",
+    "requests",
+    "pyparsing"
+]
+requires-python = ">=3.9"
+
+[project.optional-dependencies]
+dev = []
+
+[project.urls]
+Homepage = "https://github.com/ryansherby/RedfinScraper"

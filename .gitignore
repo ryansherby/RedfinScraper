@@ -2,3 +2,4 @@
 *.csv
 *.ipynb
 *.json
+*.egg-info
