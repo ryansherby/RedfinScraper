@@ -34,7 +34,7 @@ A scalable Python library that leverages Redfin's unofficial Stringray API to qu
 > **multiprocessing**: Allow for multiprocessing
 
 ### Activating The Scraper
-`scraper.scrape(city_states:list[str]=None,zip_codes:list[str],lat_tuner:float,lon_tuner:float)`
+`scraper.scrape(city_states:list[str]=None,zip_codes:list[str],lat_tuner:float=1.5,lon_tuner:float=1.5)`
 >**city_states**: List of strings representing US cities formatted as "City, State"  
 
 >**zip_codes**: List of strings representing US zip codes  
