@@ -149,8 +149,15 @@ class RedfinScraper:
         else:
             df_list=self._core(zip_list)
 
+        
+        self._data_id_ticker+=1
+        self.data_id=f"D{self._data_id_ticker:03d}"
+
+
         if len(df_list)==0:
+            self.data[self.data_id]=None
             return None
+
 
         concat_df=pd.concat(df_list,axis=0)
         concat_df=concat_df.apply(lambda row:pd.to_numeric(row,errors='ignore'))
@@ -158,10 +165,7 @@ class RedfinScraper:
     
         self.df=concat_df
 
-        self._data_id_ticker+=1
-        self.data_id=f"D{self._data_id_ticker:03d}"
         self.data[self.data_id]=self.df
-
         return self.df
 
 
