@@ -49,8 +49,9 @@ def timing_log(func):
     @functools.wraps(func)
     def wrapper(*args,**kwargs):
      
-        logger.info("Function started.")
+        logger.info(f"Function {func.__name__} started.")
         handler.flush()
+        
         tic=time.perf_counter()
         obj=func(*args,**kwargs)
         toc=time.perf_counter()
@@ -71,7 +72,7 @@ def log_no_zip(func):
         message=f"KEY ERROR: Zip Codes for {city_state} could not be found."
 
         if bool:
-            logger.error(message)
+            logger.warning(message)
             handler.flush()
 
     return wrapper
@@ -88,7 +89,7 @@ def log_404(func):
         message=f"HTTPS ERROR: {url} could not be found."
 
         if bool:
-            logger.error(message)
+            logger.warning(message)
             handler.flush()
 
     return wrapper
@@ -103,7 +104,7 @@ def log_no_API_link(func):
         message=f"HTTPS ERROR: API link for {url} could not be found."
 
         if bool:
-            logger.error(message)
+            logger.warning(message)
             handler.flush()
 
     return wrapper
