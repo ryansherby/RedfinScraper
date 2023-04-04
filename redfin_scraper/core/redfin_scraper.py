@@ -149,10 +149,13 @@ class RedfinScraper:
         else:
             df_list=self._core(zip_list)
 
+        if len(df_list)==0:
+            return None
+
         concat_df=pd.concat(df_list,axis=0)
         concat_df=concat_df.apply(lambda row:pd.to_numeric(row,errors='ignore'))
         concat_df.reset_index(inplace=True)
-
+    
         self.df=concat_df
 
         self._data_id_ticker+=1
