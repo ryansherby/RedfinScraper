@@ -17,7 +17,7 @@ A scalable Python library that leverages Redfin's unofficial Stringray API to qu
 
 ## Getting Started
 ### Installation
-`pip install redfin-scraper`
+`pip3 install -U redfin-scraper`
 
 ### Import Module
 `from redfin_scraper import RedfinScraper`  
