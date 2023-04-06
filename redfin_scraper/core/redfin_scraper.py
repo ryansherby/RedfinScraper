@@ -159,9 +159,9 @@ class RedfinScraper:
             return None
 
 
-        concat_df=pd.concat(df_list,axis=0)
+        concat_df=pd.concat(df_list,axis=0,ignore_index=True)
         concat_df=concat_df.apply(lambda row:pd.to_numeric(row,errors='ignore'))
-        concat_df.reset_index(inplace=True)
+        concat_df.reset_index(inplace=True,drop=True)
     
         self.df=concat_df
 
