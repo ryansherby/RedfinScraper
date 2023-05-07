@@ -5,12 +5,13 @@ import time
 import itertools
 import multiprocessing
 import concurrent.futures
+import io
+import csv
 
 import requests
 from bs4 import BeautifulSoup
 import numpy as np
 import pandas as pd
-import pyparsing as pp
 
 import redfin_scraper.config as rsc
 
@@ -232,18 +233,6 @@ class RedfinScraper:
 
 
 
-    def _parse_listed_csv(self,listed_csv:list[str]) -> list[list]:
-        csv_contents_list=[]
-        
-        for li in listed_csv:
-            csv_contents_list.append(pp.common.comma_separated_list.parseString(li).asList())
-
-        return csv_contents_list
-
-
-
-
-
     def _sanitize_city_states(self,city_states):
 
         if city_states==None:
@@ -411,23 +400,19 @@ class RedfinScraper:
 
         req=requests.get(url,headers=header)
 
-        req_text=req.text
-
-        listed_req_text=req_text.splitlines()
-
-        parsed_response=self._parse_listed_csv(listed_req_text)
-
-        return parsed_response
+        return req
     
     
 
 
 
-    def _set_dataframe(self,api_responses:list[list[list]]):
+    def _set_dataframe(self,api_responses:list[requests.Response]):
         df_list=[]
 
         for response in api_responses:
-            df=pd.DataFrame(data=response[1:],columns=response[0])
+            csv_stream = io.StringIO(response.content.decode('utf-8'))
+            reader = csv.DictReader(csv_stream)
+            df=pd.DataFrame(reader)
             df_list.append(df)
 
         return df_list
