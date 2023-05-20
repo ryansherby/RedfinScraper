@@ -107,8 +107,25 @@ class RedfinScraper:
     @rsrl.timing_log
     def scrape(self,city_states:list[str]=rsrj.get_config_value('city_states'),
                zip_codes:list[str]=rsrj.get_config_value('zip_codes'),
+               sold:bool=rsrj.get_config_value('sold'),
+               sale_period:str=rsrj.get_config_value('sale_period'),
                lat_tuner:float=rsrj.get_config_value('lat_tuner'),
                lon_tuner:float=rsrj.get_config_value('lon_tuner')):
+        
+        
+        
+        self._sold=False
+        
+        if sold=='True' or sold=='true' or sold == True:
+            self._sold=True
+            
+        self._sale_period=sale_period
+        
+        if(self._sold):
+            if self._sale_period not in ('1mo','3mo','6mo','1yr','2yr','3yr','5yr'):
+                raise ValueError("Sale Period must be '1mo','3mo','6mo','1yr','2yr','3yr','5yr' if Sold selected.")
+            
+            
     
 
         if lat_tuner==None:
@@ -314,11 +331,18 @@ class RedfinScraper:
 
     def _generate_urls(self,**kwargs):
         urls=[]
-        try:
-            for zip in kwargs['zip_codes']:
-                urls.append(rsc.REDFIN_URL.format(rsc.REDFIN_ZIP_URL.format(zip_code=zip)))
-        except:
-            pass
+        if(self._sold):
+            try:
+                for zip in kwargs['zip_codes']:
+                    urls.append(rsc.REDFIN_URL.format(rsc.REDFIN_ZIP_URL.format(zip_code=zip))+rsc.REDFIN_FILTER_URL.format(sale_period=self._sale_period))
+            except:
+                pass
+        else:
+            try:
+                for zip in kwargs['zip_codes']:
+                    urls.append(rsc.REDFIN_URL.format(rsc.REDFIN_ZIP_URL.format(zip_code=zip)))
+            except:
+                pass            
 
         try:
             for link in kwargs['api_links']:

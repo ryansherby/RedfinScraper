@@ -1,5 +1,6 @@
 REDFIN_URL="https://www.redfin.com{}"
 REDFIN_ZIP_URL="/zipcode/{zip_code}"
+REDFIN_FILTER_URL="/filter/include=sold-{sale_period}"
 
 REDFIN_API_CLASS_DEF=("a",{"class":"downloadLink"})
 REDFIN_API_CLASS_ID='href'
