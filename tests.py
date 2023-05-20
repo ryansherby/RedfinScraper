@@ -19,8 +19,9 @@ scraper.scrape(city_states=['Omaha,NE'],zip_codes=None)
 scraper.scrape(city_states=[('Houston', 'TX'),'JUNK, JUNKY'],zip_codes=None)
 scraper.scrape(city_states=['junk, junky'],zip_codes=['77002'])
 scraper.scrape() # From Config
+scraper.scrape(city_states=['Omaha,NE'],zip_codes=None,sold=True,sale_period='3mo')
 
-for i in range(1,7):
+for i in range(1,8):
     try:
         scraper.get_data(id=f"D00{i}")
     except:
