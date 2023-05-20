@@ -1,6 +1,9 @@
-{"zip_database_path":"./zip_code_database.csv",
-"city_states":["Seattle, WA"],
-"zip_codes":["77002"],
+{"zip_database_path":"/path/to/zip_code_database.csv",
+"city_states":["City, State"],
+"zip_codes":["10101"],
+"multiprocessing":"False",
+"sold":"False",
+"sale_period":"None",
 "lat_tuner":"1.5",
-"lon_tuner":"1.5",
-"multiprocess":"True"}
+"lon_tuner":"1.5"
+}
