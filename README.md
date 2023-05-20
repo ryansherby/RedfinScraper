@@ -27,16 +27,14 @@ A scalable Python library that leverages Redfin's unofficial Stringray API to qu
 
 ## Using The Scraper
 ### Required Setup
-`scraper.setup(zip_database_path:str,multiprocessing:bool=False)`
+`scraper.setup(zip_database_path:str, multiprocessing:bool=False)`
 
 > **zip_database_path**: Binary path to the zip_code_database.csv  
 
 > **multiprocessing**: Allow for multiprocessing
 
 ### Activating The Scraper
-```
-scraper.scrape(city_states:list[str]=None,zip_codes:list[str],sold:bool=False,sale_period:str=None,lat_tuner:float=1.5,lon_tuner:float=1.5)
-```
+`scraper.scrape(city_states:list[str]=None, zip_codes:list[str], sold:bool=False, sale_period:str=None, lat_tuner:float=1.5, lon_tuner:float=1.5)`
 >**city_states**: List of strings representing US cities formatted as "City, State"  
 
 >**zip_codes**: List of strings representing US zip codes  
