@@ -1,5 +1,4 @@
 *.log
 *.csv
 *.ipynb
-*.json
 *.egg-info
