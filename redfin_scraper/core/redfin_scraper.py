@@ -1,7 +1,3 @@
-import re
-import json
-import datetime as dt
-import time
 import itertools
 import multiprocessing
 import concurrent.futures
@@ -71,7 +67,7 @@ class RedfinScraper:
 
             else:
                 try:
-                    self.zip_database=pd.read_csv(filepath_or_buffer=zip_database_path)
+                    self.zip_database=pd.read_csv(filepath_or_buffer=zip_database_path,dtype={'zip':str})
                 except:
                     raise Exception("Could not locate zip_database.csv")
 
@@ -178,10 +174,11 @@ class RedfinScraper:
 
 
         concat_df=pd.concat(df_list,axis=0,ignore_index=True)
-        concat_df=concat_df.apply(lambda row:pd.to_numeric(row,errors='ignore'))
-        concat_df.reset_index(inplace=True,drop=True)
+        converted_df=concat_df.drop('ZIP OR POSTAL CODE',axis=1).apply(lambda row:pd.to_numeric(row,errors='ignore'))
+        converted_df.insert(6,'ZIP OR POSTAL CODE',concat_df['ZIP OR POSTAL CODE'].astype(str))
+        converted_df.reset_index(inplace=True,drop=True)
     
-        self.df=concat_df
+        self.df=converted_df
 
         self.data[self.data_id]=self.df
         return self.df
