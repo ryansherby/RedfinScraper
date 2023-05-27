@@ -39,9 +39,9 @@ A scalable Python library that leverages Redfin's unofficial Stringray API to qu
 
 >**zip_codes**: List of strings representing US zip codes  
 
->**sold**: Select whether to scrape for-sale data (default) or sold data  
+>**sold**: Select to scrape sold data as opposed to (default) for-sale data   
 
->**sale_period**: Must be selected whenever sold is True (1mo, 3mo, 6mo, 1yr, 3yr, 5yr)
+>**sale_period**: Must be selected whenever sold is True [1mo, 3mo, 6mo, 1yr, 3yr, 5yr]
 
 >**lat_tuner**: Represents # of standard deviations beyond the local latitude average that a zip code may exist within   
 
