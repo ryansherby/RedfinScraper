@@ -1,7 +1,7 @@
 {"zip_database_path":"/path/to/zip_code_database.csv",
+"multiprocessing":"False",
 "city_states":["City, State"],
 "zip_codes":["10101"],
-"multiprocessing":"False",
 "sold":"False",
 "sale_period":"None",
 "lat_tuner":"1.5",
