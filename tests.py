@@ -1,7 +1,6 @@
 from redfin_scraper import RedfinScraper
 
 scraper=RedfinScraper()
-scraper.setup('JUNK') # FAILS
 
 scraper=RedfinScraper()
 scraper.setup('./zip_code_database.csv',multiprocessing=True)
