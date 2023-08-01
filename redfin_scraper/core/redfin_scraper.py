@@ -158,6 +158,8 @@ class RedfinScraper:
 
         zip_list=list(set(zip_list)) #Eliminate duplicates
 
+        df_list=[]
+
         if self._mp:
             df_list=self._multiprocess_func(self._core,zip_list)
         else:
@@ -168,7 +170,7 @@ class RedfinScraper:
         self.data_id=f"D{self._data_id_ticker:03d}"
 
 
-        if len(df_list)==0:
+        if (len(df_list)==0 or df_list is None):
             self.data[self.data_id]=None
             return None
 
@@ -201,7 +203,7 @@ class RedfinScraper:
 
 
 
-    def _multiprocess_func(self,func,list_obj):
+    def _multiprocess_func(self,func,list_obj:list):
         
         main_list=[]
 
